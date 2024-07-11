@@ -274,16 +274,24 @@ class BaseReservation(models.Model):
     def reservation_type(self):
         return None
 
-    def save(self, *args, **kwargs):
-        if self.start_date <= self.end_date:
+    def check_availability(self, start, end) -> bool:
+        reservations = self.__class__.objects.filter(
+            room=self.room,
+            end_date__gte=start,
+            start_date__lte=end
+        )
+
+        return not reservations.exists()
+
+    def clean(self):
+        if self.start_date >= self.end_date:
             raise ValidationError('Start date cannot be after or in the same end date')
 
-        for reservation in self.room.reservations.all():
-            if reservation.start_date <= self.start_date and reservation.start_date >= self.end_date: # TODO: check for equality
-                raise ValidationError(f'Room {self.room.number} cannot be reserved')
+        if not self.check_availability(self.start_date, self.end_date):
+            raise ValidationError(f'Room {self.room.number} cannot be reserved')
 
-            if reservation.end_date <= self.start_date and reservation.end_date >= self.end_date: # TODO: check for equality
-                raise ValidationError(f'Room {self.room.number} cannot be reserved')
+    def save(self, *args, **kwargs):
+        self.clean()
 
         super().save(*args, **kwargs)
 
@@ -304,10 +312,10 @@ class SpecialReservation(BaseReservation):
     def extend_reservation(self, days: int):
         new_end_date = self.end_date + timedelta(days=days)
 
-        for reservation in self.room.reservations.all():
-            if new_end_date <= reservation.start_date:
-                raise ValidationError('Error during extending reservation')
+        if not self.check_availability(self.start_date, new_end_date):
+            raise ValidationError('Error during extending reservation')
 
         self.end_date = new_end_date
+        self.save()
 
         return f'Extended reservation for room {self.room.number} with {days} days'
