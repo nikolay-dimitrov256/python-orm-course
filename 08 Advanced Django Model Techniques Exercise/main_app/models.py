@@ -1,6 +1,7 @@
-from django.core.validators import MinValueValidator, MaxLengthValidator, RegexValidator
 from django.db import models
+from django.core.validators import MinValueValidator, RegexValidator
 
+# Create your models here.
 from main_app.validators import validate_name
 
 
