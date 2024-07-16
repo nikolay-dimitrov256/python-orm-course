@@ -93,7 +93,7 @@ def product_quantity_ordered():
 
 
 def ordered_products_per_customer():
-    orders = Order.objects.prefetch_related('products', 'products__category', 'customer').order_by('id')
+    orders = Order.objects.prefetch_related('products__category').select_related('customer').order_by('id')
     result = []
 
     for order in orders:
@@ -103,6 +103,3 @@ def ordered_products_per_customer():
             result.append(f'- Product: {product.name}, Category: {product.category.name}')
 
     return '\n'.join(result)
-
-
-
