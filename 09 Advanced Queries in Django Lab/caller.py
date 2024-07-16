@@ -1,8 +1,9 @@
 import os
+from decimal import Decimal
 from pprint import pprint
 
 import django
-from django.db.models import Sum
+from django.db.models import Sum, F
 
 # Set up Django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "orm_skeleton.settings")
@@ -101,5 +102,23 @@ def ordered_products_per_customer():
 
         for product in order.products.all():
             result.append(f'- Product: {product.name}, Category: {product.category.name}')
+
+    return '\n'.join(result)
+
+
+def filter_products():
+    products = Product.objects.values('name', 'price').filter(is_available=True, price__gt=3).order_by('-price', 'name')
+
+    result = [f'{p["name"]}: {p["price"]}lv.' for p in products]
+
+    return '\n'.join(result)
+
+
+def give_discount():
+    products = Product.objects.filter(is_available=True, price__gt=3)
+    products.update(price=F('price') * 0.7)
+    available_products = Product.objects.filter(is_available=True).order_by('-price', 'name')
+
+    result = [f'{p.name}: {p.price}lv.' for p in available_products]
 
     return '\n'.join(result)
