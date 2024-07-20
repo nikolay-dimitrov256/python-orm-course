@@ -4,6 +4,6 @@ from sqlalchemy.orm import sessionmaker
 # '<dialect>+<driver>://<username>:<password>@<host>:<port>/<database>'
 CONNECTION_STRING = 'postgresql+psycopg2://postgres:admin@localhost:5432/sqlalchemy_lab'
 
-engine = create_engine(CONNECTION_STRING)
+engine = create_engine(CONNECTION_STRING, pool_size=10, max_overflow=20)
 
 Session = sessionmaker(bind=engine)
