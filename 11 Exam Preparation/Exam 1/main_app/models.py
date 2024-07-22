@@ -30,8 +30,8 @@ class Movie(AwardedMixin, UpdatedMixin):
     )
 
     genre = models.CharField(
+        max_length=6,
         choices=GenreChoices.choices,
-        validators=[MaxLengthValidator(6)],
         default=GenreChoices.OTHER,
     )
 
