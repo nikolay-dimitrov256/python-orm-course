@@ -3,6 +3,7 @@ from django.db import models
 
 from main_app.mixins import PersonalInfoMixin, AwardedMixin, UpdatedMixin
 from main_app.choices import GenreChoices
+from main_app.managers import DirectorManager
 
 
 class Director(PersonalInfoMixin):
@@ -10,6 +11,8 @@ class Director(PersonalInfoMixin):
         validators=[MinValueValidator(0)],
         default=0,
     )
+
+    objects = DirectorManager()
 
 
 class Actor(PersonalInfoMixin, AwardedMixin, UpdatedMixin):
@@ -65,5 +68,5 @@ class Movie(AwardedMixin, UpdatedMixin):
 
     actors = models.ManyToManyField(
         to=Actor,
-        related_name='movies'
+        related_name='movies',
     )
