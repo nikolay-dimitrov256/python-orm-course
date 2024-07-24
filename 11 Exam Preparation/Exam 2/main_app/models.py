@@ -1,6 +1,8 @@
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 
+from main_app.managers import ProfileManager
+
 
 class CreatedMixin(models.Model):
     class Meta:
@@ -28,6 +30,8 @@ class Profile(CreatedMixin):
     is_active = models.BooleanField(
         default=True,
     )
+
+    objects = ProfileManager()
 
     def __str__(self):
         return self.full_name
