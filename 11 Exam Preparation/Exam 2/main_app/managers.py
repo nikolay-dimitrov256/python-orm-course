@@ -1,12 +1,11 @@
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, QuerySet
 
 
 class ProfileManager(models.Manager):
 
-    def get_regular_customers(self):
-        return self.annotate(orders_count=Count('order')).filter(
-            orders_count__gt=2
-        ).order_by(
-            '-orders_count'
-        )
+    def get_regular_customers(self) -> QuerySet:
+        return (self.annotate(orders_count=Count('order'))
+                .filter(orders_count__gt=2)
+                .order_by('-orders_count')
+                )
