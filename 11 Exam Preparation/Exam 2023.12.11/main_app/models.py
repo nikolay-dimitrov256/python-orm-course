@@ -2,6 +2,7 @@ from django.core.validators import MinLengthValidator, MinValueValidator, MaxVal
 from django.db import models
 
 from main_app.choices import SurfaceChoices
+from main_app.managers import TennisPlayerManager
 
 
 class TennisPlayer(models.Model):
@@ -27,6 +28,8 @@ class TennisPlayer(models.Model):
     is_active = models.BooleanField(
         default=True,
     )
+
+    objects = TennisPlayerManager()
 
 
 class Tournament(models.Model):
